@@ -1,0 +1,50 @@
+name: Loydura CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: foundry-rs/foundry-toolchain@v1
+      - name: Install contract dependencies (pinned)
+        run: |
+          cd contracts
+          forge install OpenZeppelin/openzeppelin-contracts@v5.2.0 --no-git
+          forge install foundry-rs/forge-std@v1.9.7 --no-git
+      - name: Solidity compilation and tests
+        run: cd contracts && forge build && forge test -vv
+  worker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --legacy-peer-deps --no-audit --no-fund
+      - name: Generate Wrangler bindings
+        run: npm run types -w @loydura/worker
+      - run: npm run typecheck -w @loydura/worker
+      - run: npm run test:worker
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --legacy-peer-deps --no-audit --no-fund
+      - run: npm run typecheck -w @loydura/web
+      - run: npm run lint -w @loydura/web
+      - run: npm run build -w @loydura/web
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

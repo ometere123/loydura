@@ -1,0 +1,39 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "loydura-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-22",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "head_sampling_rate": 1 },
+    "traces": { "enabled": true, "head_sampling_rate": 0.1 }
+  },
+  "r2_buckets": [
+    { "binding": "LOYDURA_R2", "bucket_name": "loydura-private", "preview_bucket_name": "loydura-private" }
+  ],
+  "vars": {
+    "APP_ORIGIN": "http://localhost:3000",
+    "ELYSIUM_RPC_URL": "https://testnet-rpc.elysium.kinetiq.xyz",
+    "LOYDURA_HUB_ADDRESS": "",
+    "LOYDURA_REWARDS_ADDRESS": "",
+    "LOYDURA_USDC_ADDRESS": ""
+  },
+  "env": {
+    "production": {
+      "name": "loydura-api",
+      "workers_dev": true,
+      "r2_buckets": [
+        { "binding": "LOYDURA_R2", "bucket_name": "loydura-private" }
+      ],
+      "vars": {
+        "APP_ORIGIN": "https://replace-with-vercel-origin.example",
+        "ELYSIUM_RPC_URL": "https://testnet-rpc.elysium.kinetiq.xyz",
+        "LOYDURA_HUB_ADDRESS": "",
+        "LOYDURA_REWARDS_ADDRESS": "",
+        "LOYDURA_USDC_ADDRESS": ""
+      }
+    }
+  }
+}

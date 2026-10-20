@@ -1,0 +1,19 @@
+{
+  "name": "loydura-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": ["apps/web", "apps/worker", "packages/chain"],
+  "scripts": {
+    "dev": "npm run dev -w @loydura/web",
+    "build": "npm run build -w @loydura/web",
+    "build:worker": "npm run typecheck -w @loydura/worker",
+    "typecheck": "npm run typecheck -w @loydura/web && npm run typecheck -w @loydura/worker",
+    "lint": "npm run lint -w @loydura/web && npm run lint -w @loydura/worker",
+    "test:contracts": "cd contracts && forge test -vvv",
+    "test:e2e": "npm run test:e2e -w @loydura/web",
+    "test:worker": "npm run test -w @loydura/worker",
+    "dev:worker": "npm run dev -w @loydura/worker",
+    "deploy:worker": "npm run deploy -w @loydura/worker"
+  },
+  "engines": {"node": ">=20.11"}
+}
