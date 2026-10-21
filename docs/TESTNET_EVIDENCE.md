@@ -11,9 +11,11 @@ This file records observed evidence only. Unknown values remain blockers.
 | Frontend typecheck/lint/build | VERIFIED LOCALLY | Frontend typecheck, source-scoped lint, and Next production build passed. Build emitted only optional wallet-library and CSS warnings. |
 | Supabase migration/RLS | NOT VERIFIED | Requires access to the existing Supabase project. |
 | Private R2 upload/download | PARTIAL | The private `loydura-private` bucket was provisioned in the authenticated Cloudflare account on 2026-10-21; Worker-bound upload/download authorization still requires a deployed Worker and runtime test. |
-| Elysium Hub deployment | NOT DEPLOYED / UNKNOWN | Address and transaction must be recorded from an authorized deployment. |
-| Elysium Rewards deployment | NOT DEPLOYED / UNKNOWN | Address and transaction must be recorded from an authorized deployment. |
-| Vercel frontend deployment | NOT DEPLOYED / UNKNOWN | URL and rewrite/cookie evidence required. |
+| Elysium deployer funding | VERIFIED ON TESTNET | Bridge transaction [0xc62f7b…](https://elysium.kinetiq.xyz/testnet-explorer/transaction/0xc62f7bff5ab316f7ba1b98577b6857874aa1ae7e6bdbe2953214604feadc81c3) succeeded and credited 0.1 native HYPE to the configured deployer on chain 99801. |
+| Elysium Hub deployment | VERIFIED ON TESTNET | `0x12B48836E495F863F40212f40aEc7372388345a4`; transaction [0xb31ed7…](https://elysium.kinetiq.xyz/testnet-explorer/transaction/0xb31ed795f2ff82c5e4cb5a253eebb6bfa3dfeaaa9f1b9f6c87f865421b91f72a) succeeded in block 12488301; deployed code verified. |
+| Elysium Rewards deployment | VERIFIED ON TESTNET | `0x3aaE1d1f9E751996aA3CaB9dA9f4D39E737863ea`; transaction [0xf16224…](https://elysium.kinetiq.xyz/testnet-explorer/transaction/0xf1622496eb647b47c1d6282883a31e695fb4777c8a9d6376f43777fa12676985) succeeded in block 12488313; deployed code verified. |
+| Elysium test assets | VERIFIED ON TESTNET | Test-only mock USDC `0x1c615884174973eb69c14ebb3c9a91d72f2d035d`, creator token 1 `0x2358d9a7d7a5000914bca4c20d193039d788cf8f`, and creator token 2 `0xa386e1d7ca484a2cc8a83ea7d1721924e50d21ca`; these are not production or verified Ascend assets. |
+| Vercel frontend deployment | PARTIAL | Production deployment [dpl_5nNkEQdMGRKxD8s2tMRYC5xii67g](https://vercel.com/delealufejoel-4184s-projects/loydura/5nNkEQdMGRKxD8s2tMRYC5xii67g) is READY at [loydura.vercel.app](https://loydura.vercel.app); Worker rewrite and production-cookie evidence remain pending. |
 | Cloudflare Worker deployment | NOT DEPLOYED / UNKNOWN | URL, /health output, Supabase/R2/RPC checks required. |
 | Browser SIWE and production cookies | NOT VERIFIED | Requires deployed frontend and Worker. |
 | Full membership/campaign lifecycle | NOT VERIFIED | Requires funded testnet wallets and receipt evidence. |
@@ -23,5 +25,5 @@ This file records observed evidence only. Unknown values remain blockers.
 
 ## Blockers
 
-Do not mark the release ready until the external Supabase, Cloudflare, Vercel, GitHub, and Elysium evidence is attached and the complete security/browser/lifecycle suites pass.
+Remaining release gates are the modern Supabase `sb_secret_…` credential and migration/RLS verification, Worker deployment and health/R2 integration, Vercel-to-Worker rewrite and production-cookie checks, and the complete live membership/campaign/browser lifecycle suite.
 
