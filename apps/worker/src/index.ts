@@ -201,8 +201,12 @@ async function isCreator(env: Env, shopId: bigint, wallet: Address): Promise<{ s
 
 async function hasMembership(env: Env, shopId: bigint, wallet: Address): Promise<boolean> {
   const shop = await readShop(env, shopId);
-  const expiry = await chainClient(env).readContract({ address: hubAddress(env), abi: hubAbi, functionName: "membershipExpires", args: [shopId, wallet] });
-  return Number(expiry) > Math.floor(Date.now() / 1000) || shop.creator.toLowerCase() === wallet.toLowerCase();
+  const client = chainClient(env);
+  const [expiry, block] = await Promise.all([
+    client.readContract({ address: hubAddress(env), abi: hubAbi, functionName: "membershipExpires", args: [shopId, wallet] }),
+    client.getBlock({ blockTag: "latest" })
+  ]);
+  return (expiry as bigint) > block.timestamp || shop.creator.toLowerCase() === wallet.toLowerCase();
 }
 
 function normalizeAddress(value: string, label: string): Address {

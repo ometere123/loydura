@@ -1,70 +1,70 @@
 "use client";
-import { useReadContract, useAccount } from "wagmi";
-import { rewardsAbi, hubAbi, erc20Abi, addresses, isAddress } from "@loydura/chain";
-import { formatUnits, type Address } from "viem";
-import { OnchainAction, StakeForm } from "./actions";
+
 import Link from "next/link";
-const rewardAddress=addresses.rewards as Address;
-const hubAddress=addresses.hub as Address;
-function when(seconds:bigint){return new Date(Number(seconds)*1000).toLocaleString()}
-export function CampaignPanel({id}:{id:bigint}){
-  const {address}=useAccount();
-  const {data:c,isLoading,error,refetch}=useReadContract({address:rewardAddress,abi:rewardsAbi,functionName:"getCampaign",args:[id],query:{refetchInterval:15000}});
-  const {data:p,refetch:refetchP}=useReadContract({address:rewardAddress,abi:rewardsAbi,functionName:"getPosition",args:[id,address||"0x0000000000000000000000000000000000000000"],query:{enabled:!!address,refetchInterval:15000}});
-  const {data:earned}=useReadContract({address:rewardAddress,abi:rewardsAbi,functionName:"previewEarned",args:[id,address||"0x0000000000000000000000000000000000000000"],query:{enabled:!!address,refetchInterval:15000}});
-  const token=(c?.token||"0x0000000000000000000000000000000000000000") as Address;
-  const {data:decimals}=useReadContract({address:token,abi:erc20Abi,functionName:"decimals",query:{enabled:!!c}});
-  const {data:symbol}=useReadContract({address:token,abi:erc20Abi,functionName:"symbol",query:{enabled:!!c}});
-  const {data:usdcDecimals}=useReadContract({address:addresses.usdc as Address,abi:erc20Abi,functionName:"decimals",query:{enabled:isAddress(addresses.usdc)}});
-  const {data:memberExpiry}=useReadContract({address:hubAddress,abi:hubAbi,functionName:"membershipExpires",args:[c?.shopId||0n,address||"0x0000000000000000000000000000000000000000"],query:{enabled:!!c&&!!address}});
-  if(isLoading)return <p className="subtle">Loading on-chain campaign…</p>;
-  if(error||!c)return <div className="panel"><p>Campaign unavailable. Check contract deployment and network settings.</p><p className="tiny subtle">{error?.message}</p></div>;
-  const now=BigInt(Math.floor(Date.now()/1000));const upcoming=now<c.start;const active=now>=c.start&&now<c.end;
-  const isCreator=address?.toLowerCase()===c.creator.toLowerCase();
-  return <div className="stack wide">
-    <div className="heading"><div><p className="eyebrow">LOYALTY CAMPAIGN #{id.toString()}</p><h1>Earn USDC for completing your commitment</h1>
-      <p className="subtle">Linked to <Link href={`/shop/${c.shopId}`}>Creator shop #{c.shopId.toString()}</Link></p></div>
-      <span className="pill">{upcoming?"Enrollment":active?"Streaming":"Completed"}</span></div>
-    <div className="metrics">
-      <div className="metric"><span>Funded rewards</span><strong>{formatUnits(c.budget,usdcDecimals??6)} USDC</strong></div>
-      <div className="metric"><span>Currently locked</span><strong>{formatUnits(c.activeStake,decimals||18)} {symbol||"tokens"}</strong></div>
-      <div className="metric"><span>Active wallets</span><strong>{c.activeLockers.toString()}</strong></div>
-      <div className="metric"><span>Early exits</span><strong>{c.earlyExits.toString()}</strong></div>
-      <div className="metric"><span>Forfeited rewards</span><strong>{formatUnits(c.totalForfeited,usdcDecimals??6)} USDC</strong></div>
-      <div className="metric"><span>Completed positions</span><strong>{c.completed.toString()}</strong></div>
-    </div>
-    <div className="panel stack"><h3>Fixed campaign terms</h3><p>Starts: {when(c.start)}</p><p>Ends: {when(c.end)}</p>
-      <p className="subtle">Enrollment closes at start. Rewards are claimable only after the end. Lock principal always remains withdrawable; early exit forfeits all unclaimed rewards. Every member must have paid access through the end.</p>
-      <p className="tiny mono">Creator token: {c.token}</p><p className="tiny mono">Creator: {c.creator}</p>
-    </div>
-    {address&&<div className="panel stack"><h3>Your position</h3>
-      <p>Membership expires: {memberExpiry?when(memberExpiry):"Not purchased"} {memberExpiry&&memberExpiry>=c.end?"(eligible)":"(ineligible for new locks)"}</p>
-      <p>Principal: {p?.exists?formatUnits(p.amount,decimals||18):"0"} {symbol||"tokens"}</p>
-      <p>Estimated accrued USDC: {formatUnits(earned||0n,usdcDecimals??6)}</p>
-      <p className="tiny subtle">Accrual may change after another participant forfeits. A displayed estimate is not a claimable balance before campaign end.</p>
-      {upcoming&&!p?.exists&&<StakeForm campaignId={id} token={token} entryOpen={true}/>}
-      {p?.exists&&!p.principalWithdrawn&&<OnchainAction kind="unlock" campaignId={id} label={now<c.end?"Exit early and recover principal":"Withdraw principal"}
-        confirm={now<c.end?"You will permanently forfeit ALL unpaid USDC rewards. You will recover only the locked tokens. Continue?":undefined}/>}
-      {p?.exists&&!p.earlyExited&&now>=c.end&&!p.claimed&&<OnchainAction kind="claim" campaignId={id} label="Claim earned USDC"/>}
-      <button className="secondary" onClick={()=>{refetch();refetchP()}} type="button">Refresh on-chain position</button>
-    </div>}
-    {isCreator&&<div className="panel stack"><h3>Creator refund</h3><p className="subtle">Only unallocated rewards or residual dust after all claims can be reclaimed; participant entitlements remain protected.</p>
-      <OnchainAction kind="reclaim" campaignId={id} label="Reclaim refundable USDC"/></div>}
-  </div>;
+import { ArrowRight, ExternalLink, RefreshCw, WalletCards } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useAccount, useBlock, useReadContract } from "wagmi";
+import { formatUnits, type Address } from "viem";
+import { addresses, erc20Abi, hubAbi, isAddress, isPublicChainReady, publicConfig, rewardsAbi } from "@loydura/chain";
+import { BackLink, ChainConfigNotice, EmptyState, ErrorState, LoadingState, MetricCard, PageIntro, SectionHeading, StatusBadge, VerifiedLabel } from "@/components/design-system";
+import { OnchainAction, StakeForm } from "./actions";
+
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000" as Address;
+const rewardsAddress = addresses.rewards as Address;
+const hubAddress = addresses.hub as Address;
+type CampaignData = { shopId: bigint; creator: Address; token: Address; start: bigint; end: bigint; budget: bigint; activeStake: bigint; refundable: bigint; refunded: bigint; claimed: bigint; totalForfeited: bigint; totalLocked: bigint; activeLockers: bigint; earlyExits: bigint; completed: bigint; exists: boolean };
+type Position = { amount: bigint; exists: boolean; principalWithdrawn: boolean; earlyExited: boolean; claimed: boolean; completionRecorded: boolean };
+function dateFromChain(seconds: bigint) { return new Date(Number(seconds) * 1000).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }); }
+function campaignStatus(campaign: CampaignData, now?: bigint) { if (now === undefined) return { label: "Reading chain time", tone: "neutral" as const }; return now < campaign.start ? { label: "Enrollment open", tone: "warning" as const } : now < campaign.end ? { label: "Active streaming", tone: "success" as const } : { label: "Completed", tone: "accent" as const }; }
+
+export function CampaignPanel({ id }: { id: bigint }) {
+  const { address, chainId } = useAccount();
+  const { data: block } = useBlock({ watch: true, query: { enabled: isPublicChainReady } });
+  const enabled = isPublicChainReady && isAddress(addresses.rewards);
+  const { data: rawCampaign, isLoading, error, refetch } = useReadContract({ address: rewardsAddress, abi: rewardsAbi, functionName: "getCampaign", args: [id], query: { enabled, refetchInterval: 15_000 } });
+  const campaign = rawCampaign as CampaignData | undefined;
+  const { data: rawPosition, refetch: refetchPosition } = useReadContract({ address: rewardsAddress, abi: rewardsAbi, functionName: "getPosition", args: [id, address || ZERO_ADDRESS], query: { enabled: enabled && Boolean(address), refetchInterval: 15_000 } });
+  const position = rawPosition as Position | undefined;
+  const { data: earned, refetch: refetchEarned } = useReadContract({ address: rewardsAddress, abi: rewardsAbi, functionName: "previewEarned", args: [id, address || ZERO_ADDRESS], query: { enabled: enabled && Boolean(address), refetchInterval: 15_000 } });
+  const token = campaign?.token || ZERO_ADDRESS;
+  const { data: tokenDecimals } = useReadContract({ address: token, abi: erc20Abi, functionName: "decimals", query: { enabled: Boolean(campaign?.token) } });
+  const { data: tokenSymbol } = useReadContract({ address: token, abi: erc20Abi, functionName: "symbol", query: { enabled: Boolean(campaign?.token) } });
+  const { data: usdcDecimals } = useReadContract({ address: addresses.usdc as Address, abi: erc20Abi, functionName: "decimals", query: { enabled: isAddress(addresses.usdc) } });
+  const { data: memberExpiry } = useReadContract({ address: hubAddress, abi: hubAbi, functionName: "membershipExpires", args: [campaign?.shopId || 0n, address || ZERO_ADDRESS], query: { enabled: enabled && Boolean(campaign) && Boolean(address) } });
+  const [profileName, setProfileName] = useState("");
+  useEffect(() => { if (!campaign) return; fetch(`/api/shop?shopId=${campaign.shopId}`, { cache: "no-store" }).then((response) => response.json()).then((data) => setProfileName(data.profile?.name || "")).catch(() => setProfileName("")); }, [campaign]);
+  const now = block?.timestamp;
+  const status = campaign ? campaignStatus(campaign, now) : { label: "Unavailable", tone: "danger" as const };
+  const refresh = () => { void refetch(); void refetchPosition(); void refetchEarned(); };
+  const isCreator = Boolean(address && campaign && address.toLowerCase() === campaign.creator.toLowerCase());
+  const eligibleThroughEnd = Boolean(memberExpiry !== undefined && campaign && memberExpiry >= campaign.end);
+  const positionState = position?.earlyExited ? "Early exited" : position?.claimed ? "Successfully claimed" : position?.principalWithdrawn ? "Principal withdrawn" : position?.exists ? "Active position" : "No position";
+
+  if (!isPublicChainReady) return <div className="page-shell"><BackLink href="/discover">Back to Discover</BackLink><ChainConfigNotice /></div>;
+  if (chainId && chainId !== publicConfig.chainId) return <div className="page-shell"><BackLink href="/discover">Back to Discover</BackLink><EmptyState title="Switch to Elysium Testnet." description={`This campaign is settled on chain ${publicConfig.chainId}.`} /></div>;
+  if (isLoading) return <div className="page-shell"><BackLink href="/discover">Back to Discover</BackLink><LoadingState label="Reading campaign state from Elysium…" /></div>;
+  if (error || !campaign) return <div className="page-shell"><BackLink href="/discover">Back to Discover</BackLink><ErrorState title="Campaign unavailable." description="The deployed Rewards contract did not return this campaign. A failed RPC read is not a completed campaign." onRetry={() => void refetch()} /></div>;
+
+  return <div className="page-shell"><BackLink href={`/shop/${campaign.shopId}`}>Back to {profileName || `shop #${campaign.shopId}`}</BackLink><PageIntro eyebrow={`LOYALTY CAMPAIGN #${id.toString()}`} title="Commitment with the settlement rules in view." description="A creator-funded USDC reward pool streams across a fixed cohort. Read the terms before locking tokens; the contract, not this estimate, determines settlement." actions={<div className="stack"><StatusBadge tone={status.tone}>{status.label}</StatusBadge><VerifiedLabel>Live Rewards contract</VerifiedLabel></div>} />
+    <div className="metrics"><MetricCard label="Net reward budget" value={`${formatUnits(campaign.budget, usdcDecimals ?? 6)} USDC`} detail="Funded upfront by the creator" tone="gold" /><MetricCard label="Locked token volume" value={`${formatUnits(campaign.activeStake, tokenDecimals ?? 18)} ${tokenSymbol || "tokens"}`} detail={`${campaign.activeLockers.toString()} active lockers`} /><MetricCard label="Early exits" value={campaign.earlyExits.toString()} detail={`${formatUnits(campaign.totalForfeited, usdcDecimals ?? 6)} USDC forfeited`} /><MetricCard label="Completed positions" value={campaign.completed.toString()} detail="Claim and principal actions remain separate" /></div>
+    <section className="campaign-layout"><div className="stack"><div className="panel stack"><SectionHeading eyebrow="CAMPAIGN TERMS" title={profileName || `Creator shop #${campaign.shopId}`} description="The current contract state is shown below. Times use the latest Elysium block, not an unsynchronized browser clock." /><div className="detail-grid"><div><span className="metric-label">Start</span><strong>{dateFromChain(campaign.start)}</strong></div><div><span className="metric-label">End</span><strong>{dateFromChain(campaign.end)}</strong></div><div><span className="metric-label">Creator</span><a className="mono tiny" href={`https://elysium.kinetiq.xyz/testnet-explorer/address/${campaign.creator}`} target="_blank" rel="noreferrer">{campaign.creator}</a></div><div><span className="metric-label">Token</span><a className="mono tiny" href={`https://elysium.kinetiq.xyz/testnet-explorer/address/${campaign.token}`} target="_blank" rel="noreferrer">{campaign.token}</a></div></div><div className="notice"><p><strong>Rules before signing:</strong> enrollment closes at the start. Rewards are claimable only after the end. Early exit returns principal but forfeits all unpaid rewards; accrued estimates can change as the contract redistributes forfeitures. No price protection or guaranteed profit is offered.</p></div></div><div className="panel stack"><SectionHeading eyebrow="CAMPAIGN ACCOUNTING" title="Transparent participant metrics" description="These values are read from the Rewards contract and are not unique-human counts." /><div className="detail-grid"><div><span className="metric-label">Reward pool remaining for settlement</span><strong>{formatUnits(campaign.budget - campaign.claimed, usdcDecimals ?? 6)} USDC</strong></div><div><span className="metric-label">Active lockers</span><strong>{campaign.activeLockers.toString()}</strong></div><div><span className="metric-label">Total locked to date</span><strong>{formatUnits(campaign.totalLocked, tokenDecimals ?? 18)} {tokenSymbol || "tokens"}</strong></div><div><span className="metric-label">Creator refunds</span><strong>{formatUnits(campaign.refundable > campaign.refunded ? campaign.refundable - campaign.refunded : 0n, usdcDecimals ?? 6)} USDC eligible balance</strong></div></div></div></div><aside className="stack"><div className="panel stack"><SectionHeading eyebrow="YOUR POSITION" title={address ? positionState : "Connect to participate"} description="Membership eligibility, principal, and claim state are checked against your wallet." />{!address ? <EmptyState icon={<WalletCardsIcon />} title="Connect your wallet first." description="A connected wallet is required to check access or sign a lock transaction." /> : <><p className="tiny">Membership through campaign end: <strong>{eligibleThroughEnd ? "Eligible" : memberExpiry ? `Expires ${dateFromChain(memberExpiry)}` : "Not found"}</strong></p>{position?.exists ? <><MetricCard label="Locked principal" value={`${formatUnits(position.amount, tokenDecimals ?? 18)} ${tokenSymbol || "tokens"}`} detail={position.principalWithdrawn ? "Principal returned" : "Principal still in contract"} /><MetricCard label="Accrued reward estimate" value={`${formatUnits(earned || 0n, usdcDecimals ?? 6)} USDC`} detail="Not claimable until the campaign ends" />{position.earlyExited && <StatusBadge tone="danger">Early exit forfeiture is final</StatusBadge>}{position.claimed && <StatusBadge tone="success">Reward claim confirmed</StatusBadge>}{now !== undefined && !position.principalWithdrawn && <OnchainAction kind="unlock" campaignId={id} label={now < campaign.end ? "Exit early & recover principal" : "Withdraw principal"} confirm={now < campaign.end ? "You will recover the locked tokens and permanently forfeit all unpaid USDC rewards. Continue?" : undefined} onConfirmed={refresh} />}{now !== undefined && now >= campaign.end && !position.earlyExited && !position.claimed && <OnchainAction kind="claim" campaignId={id} label="Claim earned USDC" onConfirmed={refresh} />}<button className="button button-quiet button-small" type="button" onClick={refresh}><RefreshCw size={14} aria-hidden="true" /> Refresh position</button></> : now !== undefined && now < campaign.start ? <><StakeForm campaignId={id} token={token} entryOpen={eligibleThroughEnd} onConfirmed={refresh} />{!eligibleThroughEnd && <p className="tiny">A paid membership valid through the campaign end is required before the lock transaction can succeed.</p>}</> : <EmptyState title="Enrollment is closed." description="New positions cannot enter after the campaign start." />}</>}</div>{isCreator && <div className="panel stack"><SectionHeading eyebrow="CREATOR SETTLEMENT" title="Reclaim only what the contract allows." description="Reclaiming is restricted to refundable balances after participant liabilities are settled." /><OnchainAction kind="reclaim" campaignId={id} label="Reclaim refundable USDC" onConfirmed={refresh} /></div>}<Link className="button button-outline" href={`https://elysium.kinetiq.xyz/testnet-explorer/address/${rewardsAddress}`} target="_blank">Inspect Rewards contract <ExternalLink size={14} aria-hidden="true" /></Link></aside></section></div>;
 }
-export function CampaignTeaser({id}:{id:bigint}){
-  const {data:c}=useReadContract({address:rewardAddress,abi:rewardsAbi,functionName:"getCampaign",args:[id]});
-  const {data:usdcDecimals}=useReadContract({address:addresses.usdc as Address,abi:erc20Abi,functionName:"decimals",query:{enabled:isAddress(addresses.usdc)}});
-  if(!c)return null;
-  return <Link className="catalog-card" href={`/campaign/${id}`}><span className="eyebrow">CAMPAIGN #{id}</span>
-    <strong>Shop #{c.shopId.toString()}</strong><span className="subtle">{formatUnits(c.budget,usdcDecimals??6)} USDC funded</span>
-    <span className="tiny">Ends {when(c.end)}</span></Link>;
+
+function WalletCardsIcon() { return <WalletCards aria-hidden="true" size={24} />; }
+
+export function CampaignTeaser({ id }: { id: bigint }) {
+  const { data } = useReadContract({ address: rewardsAddress, abi: rewardsAbi, functionName: "getCampaign", args: [id], query: { enabled: isPublicChainReady && isAddress(addresses.rewards) } });
+  const { data: usdcDecimals } = useReadContract({ address: addresses.usdc as Address, abi: erc20Abi, functionName: "decimals", query: { enabled: isAddress(addresses.usdc) } });
+  const campaign = data as CampaignData | undefined; if (!campaign) return null;
+  return <Link className="catalog-card" href={`/campaign/${id}`}><span className="eyebrow">CAMPAIGN #{id.toString()}</span><strong>Shop #{campaign.shopId.toString()}</strong><span className="subtle">{formatUnits(campaign.budget, usdcDecimals ?? 6)} USDC funded</span><span className="tiny">Ends {dateFromChain(campaign.end)}</span><span className="text-link">Open campaign <ArrowRight size={14} aria-hidden="true" /></span></Link>;
 }
-export function CampaignFeed(){
-  const {data:last}=useReadContract({address:rewardAddress,abi:rewardsAbi,functionName:"nextCampaignId",query:{refetchInterval:30000}});
-  if(!isAddress(addresses.rewards))return <p className="subtle">Deploy the contracts and configure their addresses to enable live campaign listings.</p>;
-  if(last===undefined)return <p className="subtle">Loading verified campaigns…</p>;
-  const ids:bigint[]=[];for(let id=last-1n;id>=1n&&ids.length<20;id--)ids.push(id);
-  if(!ids.length)return <p className="subtle">No campaigns deployed yet. A creator can fund the first from Creator Studio.</p>;
-  return <div className="catalog">{ids.map(id=><CampaignTeaser key={id.toString()} id={id}/>)}</div>;
+
+export function CampaignFeed() {
+  const { data: last, isLoading, error, refetch } = useReadContract({ address: rewardsAddress, abi: rewardsAbi, functionName: "nextCampaignId", query: { enabled: isPublicChainReady && isAddress(addresses.rewards), refetchInterval: 30_000 } });
+  if (!isPublicChainReady) return <ChainConfigNotice />;
+  if (isLoading) return <LoadingState label="Reading verified campaigns…" />;
+  if (error) return <ErrorState description="Campaign index unavailable; this is a network error, not proof that no campaigns exist." onRetry={() => void refetch()} />;
+  const ids: bigint[] = []; for (let campaignId = (last as bigint | undefined) ? (last as bigint) - 1n : 0n; campaignId >= 1n && ids.length < 20; campaignId--) ids.push(campaignId);
+  if (!ids.length) return <EmptyState title="No campaigns deployed yet." description="A creator can fund the first campaign from Creator Studio." />;
+  return <div className="catalog">{ids.map((campaignId) => <CampaignTeaser key={campaignId.toString()} id={campaignId} />)}</div>;
 }

@@ -1,6 +1,15 @@
 # LOYDURA
 
-Loydura is one Elysium Testnet product: token-paid creator memberships plus creator-funded USDC commitment campaigns. The approved UI remains Discover, Creator Store, Campaign, Creator Studio, and My Dashboard.
+Loydura is one Elysium Testnet product: token-paid creator memberships plus creator-funded USDC commitment campaigns. The approved product screens are Discover, Creator Store, Campaign, Creator Studio, and My Dashboard, presented through a dedicated public homepage.
+
+## Route map
+
+- `/` — independent product homepage and risk-aware product explanation.
+- `/discover` — bounded storefront search and live campaign discovery.
+- `/shop/[id]` — creator storefront, membership checkout, protected content, and linked campaigns.
+- `/campaign/[id]` — live campaign accounting, position state, claims, exits, and principal recovery.
+- `/studio` — wallet-owned storefront discovery, creation, content publishing, and campaign funding.
+- `/me` — wallet activity, memberships, positions, accrued estimates, and settlement actions.
 
 ## Final runtime architecture
 
@@ -29,6 +38,9 @@ Useful checks:
     npm run build
     npm run test:worker
     npm run test:contracts
+    npm run test:e2e
+
+Frontend design and interaction decisions are documented in [docs/FRONTEND_DESIGN.md](docs/FRONTEND_DESIGN.md).
 
 The contracts include unrestricted mint test fixtures only. They are not production stablecoins. No mainnet launch, real-money custody, audit, partnership, or live deployment is claimed without evidence in docs/TESTNET_EVIDENCE.md.
 
