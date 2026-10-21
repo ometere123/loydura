@@ -50,4 +50,4 @@ These are captures of the real production deployment, not static mockups.
 
 1. A browser-wallet extension signature prompt was not automated in the final Playwright run. The production API SIWE path and the client newline regression are verified; a human wallet prompt remains a manual acceptance step.
 2. The real five-wallet lifecycle ledger is retained from the unchanged deployed contracts and was not replayed after a UI-only redesign. No contract address was changed.
-3. Vercel's build reported 31 dependency audit findings (24 moderate, 7 high) from the installed dependency graph. These are recorded as a follow-up security risk; no audit or mainnet readiness claim is made.
+3. The dependency graph reports 26 audit findings (24 moderate, 2 high, 0 critical) after removing the unused `eslint-config-next` package. The remaining high findings are transitive PostCSS and WalletConnect/wagmi paths; available automated fixes require major Next or wagmi migrations and were not applied without full compatibility validation. No independent audit or mainnet readiness claim is made.

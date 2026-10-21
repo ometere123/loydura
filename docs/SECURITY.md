@@ -26,4 +26,4 @@ OpenZeppelin `SafeERC20` and `ReentrancyGuard` are used. Hostile rebasing, black
 
 - The final Playwright run does not automate a browser wallet-extension signature prompt; production API signing, cookie behavior, replay rejection, and the SIWE newline regression are verified.
 - The real five-wallet testnet lifecycle ledger is retained from the unchanged deployed contracts and was not replayed after the UI-only redesign.
-- The Vercel dependency install reported 31 audit findings (24 moderate, 7 high). No independent audit or mainnet readiness claim is made.
+- The dependency graph now reports 26 audit findings (24 moderate, 2 high, 0 critical) after removing the unused `eslint-config-next` package. The remaining high findings are transitive PostCSS and WalletConnect/wagmi paths; available automated fixes require major Next or wagmi migrations and were not applied without full compatibility validation. No independent audit or mainnet readiness claim is made.
