@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: resolve(__dirname, "../.."),
   reactStrictMode: true,
   poweredByHeader: false,
+  allowedDevOrigins: ["127.0.0.1"],
   webpack(config) {
     config.resolve.fallback = {
       ...config.resolve.fallback,
