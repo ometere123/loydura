@@ -18,7 +18,7 @@ This file records observed evidence only. Unknown values remain blockers.
 | Browser SIWE and production cookies | NOT VERIFIED | Requires deployed frontend and Worker. |
 | Full membership/campaign lifecycle | NOT VERIFIED | Requires funded testnet wallets and receipt evidence. |
 | Local Wrangler development | VERIFIED LOCALLY | Wrangler served `/health` with an expected 503 degraded response when secrets/contracts were absent and rejected a hostile origin with 403. |
-| CI | NOT VERIFIED | GitHub repository has no visible remote branch or Actions run evidence yet. |
+| CI | VERIFIED REMOTELY | GitHub Actions run [39519716788](https://github.com/ometere123/loydura/actions/runs/39519716788) passed contracts, Worker, and web jobs, including the frontend Playwright suite. |
 | Ascend submission | NOT CLAIMED | No partnership, token launch, audit, or competition acceptance is inferred. |
 
 ## Blockers
