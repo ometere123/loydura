@@ -20,12 +20,12 @@ This file records observed evidence only. Unknown values remain blockers.
 | Browser SIWE and production cookies | VERIFIED THROUGH PRODUCTION API; BROWSER WALLET SIGNING PARTIAL | Vercel-to-Worker SIWE created a Secure, HttpOnly, SameSite=Lax cookie; session validation, logout, and replay rejection passed through `/api/*`. CUA browser smoke checks passed for Discover, Creator Store, Campaign, Creator Studio, and My Dashboard; an interactive wallet-signature prompt was not automated. |
 | Full membership/campaign lifecycle | VERIFIED ON TESTNET | Shop #1 and campaign #1 were exercised with one creator and four member wallets: all memberships purchased, four locks admitted, two early exits forfeited rewards, two members claimed after completion, all principal was returned, and the creator reclaimed the remaining 9 micro-USDC. |
 | Local Wrangler development | VERIFIED LOCALLY | Wrangler served `/health` with an expected 503 degraded response when secrets/contracts were absent and rejected a hostile origin with 403. |
-| CI | VERIFIED REMOTELY; FINAL COMMIT PENDING | GitHub Actions run [39520738080](https://github.com/ometere123/loydura/actions/runs/39520738080) is the latest pre-freeze evidence. A new run must pass after the final source/documentation commit. |
+| CI | VERIFIED ON FINAL COMMIT | GitHub Actions run [39526534095](https://github.com/ometere123/loydura/actions/runs/39526534095) passed for commit `8d9a358694a7f3d9dd207d2ff30cc55128053c48`, including Worker tests, Solidity tests, frontend checks, and Playwright. |
 | Ascend submission | NOT CLAIMED | No partnership, token launch, audit, or competition acceptance is inferred. |
 
 ## Blockers
 
-Remaining release gates are final-commit CI, independent source verification of the deployed contracts on the explorer, and an interactive wallet-signature Playwright run. No mainnet deployment, real-money launch, Ascend approval, or production-token provenance is claimed.
+Remaining release gates are independent source verification of the deployed contracts on the explorer and an interactive wallet-signature Playwright run. No mainnet deployment, real-money launch, Ascend approval, or production-token provenance is claimed.
 
 ## Live contract and lifecycle evidence
 
