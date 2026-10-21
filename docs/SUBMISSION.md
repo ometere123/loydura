@@ -10,11 +10,11 @@ Launching a token does not automatically create customer activity. Loydura gives
 
 ## Execution evidence
 
-- Source commit: `b2e63bf3304b3f4511875ecb42cab5d9ff48aba8`.
+- Source commit: `4f13f91795a2fe767dbd5277ee39b24d9d416547`.
 - Frontend: [loydura.vercel.app](https://loydura.vercel.app).
 - Worker: [loydura-api.delealufejoel.workers.dev](https://loydura-api.delealufejoel.workers.dev).
 - Contracts: Hub `0x12B48836E495F863F40212f40aEc7372388345a4`; Rewards `0x3aaE1d1f9E751996aA3CaB9dA9f4D39E737863ea`.
-- CI: [run 39536996835](https://github.com/ometere123/loydura/actions/runs/39536996835).
+- CI: [run 39540235093](https://github.com/ometere123/loydura/actions/runs/39540235093).
 - Post-redesign testnet lifecycle: campaign #2 completed with four memberships, four locks, two early exits, two claims, principal recovery, and creator reclaim; transaction evidence is in [TESTNET_EVIDENCE.md](TESTNET_EVIDENCE.md).
 - Full source, lifecycle, storage, and test evidence: [TESTNET_EVIDENCE.md](TESTNET_EVIDENCE.md).
 
@@ -43,4 +43,4 @@ Loydura does not claim official Ascend sponsorship, certification, independent a
 
 ## Readiness verdict
 
-The testnet application is materially implemented, source-verified, deployed, and supported by green local/CI gates. It remains a release candidate rather than an unqualified READY declaration because interactive browser-wallet signing was not automated in the final browser suite, the existing five-wallet ledger was not replayed after the UI-only redesign, and the dependency audit findings remain documented residual risk.
+The testnet application is materially implemented, source-verified, deployed, and supported by green local/CI gates. The post-redesign campaign-#2 lifecycle has now been replayed on Elysium with real memberships, locks, early exits, claims, principal recovery, and creator reclaim. It remains short of an unqualified READY declaration because interactive browser-wallet signing was not automated in the final browser suite and the dependency audit findings remain documented residual risk.
