@@ -292,7 +292,12 @@ app.post("/api/auth/verify", async (c) => {
   requireBrowserOrigin(c.env, c.req.raw);
   await rateLimit(c.env, c.req.raw, "verify", 10, 300);
   const body = await jsonBody(c.req.raw, z.object({ message: z.string().min(1).max(4096), signature: z.string().regex(/^0x[0-9a-fA-F]+$/) }));
-  const parsed = parseSiweMessage(body.message);
+  let parsed: ReturnType<typeof parseSiweMessage>;
+  try {
+    parsed = parseSiweMessage(body.message);
+  } catch {
+    throw new ApiError(401, "Invalid sign-in message");
+  }
   const appOrigin = new URL(c.env.APP_ORIGIN);
   if (!parsed.address || !parsed.domain || !parsed.uri || parsed.chainId !== CHAIN_ID || parsed.version !== "1" || parsed.domain !== appOrigin.host || parsed.uri !== c.env.APP_ORIGIN || !parsed.nonce || !/^[0-9a-f]{32}$/i.test(parsed.nonce) || !parsed.issuedAt || !parsed.expirationTime) throw new ApiError(401, "Invalid sign-in message");
   const now = new Date();
