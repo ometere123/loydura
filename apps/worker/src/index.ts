@@ -142,6 +142,12 @@ function addCookie(response: Response, value: string): Response {
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
+function noStore(response: Response): Response {
+  const headers = new Headers(response.headers);
+  headers.set("Cache-Control", "no-store");
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
+
 async function currentSession(env: Env, request: Request): Promise<Session | null> {
   const token = parseCookies(request).loydura_session;
   if (!token || !/^[0-9a-f]{64}$/i.test(token)) return null;
@@ -275,7 +281,7 @@ app.post("/api/auth/nonce", async (c) => {
   const expiresAt = new Date(Date.now() + 5 * 60_000).toISOString();
   const result = await database(c.env).from("siwe_nonces").insert({ nonce, wallet_address: walletAddress, chain_id: CHAIN_ID, expires_at: expiresAt });
   if (result.error) throw new ApiError(503, "Could not issue sign-in nonce");
-  return c.json({ nonce, expiresAt });
+  return noStore(c.json({ nonce, expiresAt }));
 });
 
 app.post("/api/auth/verify", async (c) => {
@@ -299,20 +305,20 @@ app.post("/api/auth/verify", async (c) => {
   const expiresAt = new Date(Date.now() + SESSION_MAX_AGE * 1000).toISOString();
   const sessionResult = await db.from("app_sessions").insert({ token_hash: tokenHash, wallet_address: walletAddress, expires_at: expiresAt });
   if (sessionResult.error) throw new ApiError(503, "Could not create session");
-  const response = c.json({ address: walletAddress, expiresAt });
+  const response = noStore(c.json({ address: walletAddress, expiresAt }));
   return addCookie(response, sessionCookie(token, c.env));
 });
 
 app.get("/api/auth/session", async (c) => {
   const session = await currentSession(c.env, c.req.raw);
-  return c.json({ authenticated: !!session, address: session?.walletAddress || null, expiresAt: session?.expiresAt || null });
+  return noStore(c.json({ authenticated: !!session, address: session?.walletAddress || null, expiresAt: session?.expiresAt || null }));
 });
 
 app.post("/api/auth/logout", async (c) => {
   requireBrowserOrigin(c.env, c.req.raw);
   const token = parseCookies(c.req.raw).loydura_session;
   if (token && /^[0-9a-f]{64}$/i.test(token)) await database(c.env).from("app_sessions").delete().eq("token_hash", await sha256(token));
-  return addCookie(c.json({ ok: true }), sessionCookie("", c.env, 0));
+  return addCookie(noStore(c.json({ ok: true })), sessionCookie("", c.env, 0));
 });
 
 app.get("/api/shop", async (c) => {
@@ -367,14 +373,14 @@ app.get("/api/content", async (c) => {
   await requireContentAccess(c, Number(shopId));
   const result = await database(c.env).from("shop_content").select("id,shop_id,title,kind,filename,created_at").eq("shop_id", Number(shopId)).order("created_at", { ascending: false });
   if (result.error) throw new ApiError(503, "Content store unavailable");
-  return c.json({ content: result.data || [] });
+  return noStore(c.json({ content: result.data || [] }));
 });
 
 app.get("/api/content/:id", async (c) => {
   const row = await contentRow(c.env, c.req.param("id"));
   await requireContentAccess(c, row.shop_id);
   if (row.kind !== "post") throw new ApiError(400, "This content is a file download");
-  return c.json({ content: { id: row.id, title: row.title, kind: row.kind, body: row.body, created_at: row.created_at } });
+  return noStore(c.json({ content: { id: row.id, title: row.title, kind: row.kind, body: row.body, created_at: row.created_at } }));
 });
 
 app.get("/api/content/:id/download", async (c) => {

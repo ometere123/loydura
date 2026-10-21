@@ -1,8 +1,9 @@
 import { defineChain } from "viem";
 
-const runtimeProcess = (globalThis as typeof globalThis & { process?: { env?: Record<string, string | undefined> } }).process;
-const publicEnv = runtimeProcess?.env;
-const publicRpcUrl = publicEnv?.NEXT_PUBLIC_RPC_URL || "https://testnet-rpc.elysium.kinetiq.xyz";
+// Direct public-env expressions are required for Next.js to inline the client
+// configuration. The Worker build supplies a minimal process type and uses
+// Wrangler's nodejs_compat runtime for this ABI-only shared package.
+const publicRpcUrl = process.env.NEXT_PUBLIC_RPC_URL || "https://testnet-rpc.elysium.kinetiq.xyz";
 
 export const elysium = defineChain({
   id: 99801,
@@ -55,7 +56,7 @@ export const rewardsAbi = [
 
 export const isAddress = (value: string): value is `0x${string}` => /^0x[a-fA-F0-9]{40}$/.test(value);
 export const addresses = {
-  hub: publicEnv?.NEXT_PUBLIC_LOYDURA_HUB_ADDRESS ?? "",
-  rewards: publicEnv?.NEXT_PUBLIC_LOYDURA_REWARDS_ADDRESS ?? "",
-  usdc: publicEnv?.NEXT_PUBLIC_USDC_ADDRESS ?? ""
+  hub: process.env.NEXT_PUBLIC_LOYDURA_HUB_ADDRESS ?? "",
+  rewards: process.env.NEXT_PUBLIC_LOYDURA_REWARDS_ADDRESS ?? "",
+  usdc: process.env.NEXT_PUBLIC_USDC_ADDRESS ?? ""
 };

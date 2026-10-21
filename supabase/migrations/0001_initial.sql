@@ -53,6 +53,14 @@ alter table public.shop_content enable row level security;
 alter table public.rate_limit_buckets enable row level security;
 -- No anon/authenticated access policies. Server routes use the service role after
 -- independently authenticating the wallet and checking on-chain access.
+grant usage on schema public to service_role;
+grant select, insert, update, delete on
+  public.siwe_nonces,
+  public.app_sessions,
+  public.shop_profiles,
+  public.shop_content,
+  public.rate_limit_buckets
+to service_role;
 
 create or replace function public.consume_siwe_nonce(p_nonce text, p_address text, p_chain_id bigint)
 returns boolean

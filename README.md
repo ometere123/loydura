@@ -33,3 +33,7 @@ Useful checks:
 The contracts include unrestricted mint test fixtures only. They are not production stablecoins. No mainnet launch, real-money custody, audit, partnership, or live deployment is claimed without evidence in docs/TESTNET_EVIDENCE.md.
 
 Repository target: https://github.com/ometere123/loydura
+
+## Observed testnet deployment
+
+The verified testnet endpoints currently used for integration evidence are [loydura.vercel.app](https://loydura.vercel.app) for the frontend and [loydura-api.delealufejoel.workers.dev](https://loydura-api.delealufejoel.workers.dev) for the Cloudflare Worker. The Worker health endpoint reports Supabase, private R2, Elysium RPC, and deployed-contract readiness. Addresses and transaction evidence are maintained in [docs/TESTNET_EVIDENCE.md](docs/TESTNET_EVIDENCE.md). All deployed tokens in this evidence are explicitly labeled test-only assets.

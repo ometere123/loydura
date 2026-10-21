@@ -28,11 +28,11 @@
         { "binding": "LOYDURA_R2", "bucket_name": "loydura-private" }
       ],
       "vars": {
-        "APP_ORIGIN": "https://replace-with-vercel-origin.example",
+        "APP_ORIGIN": "https://loydura.vercel.app",
         "ELYSIUM_RPC_URL": "https://testnet-rpc.elysium.kinetiq.xyz",
-        "LOYDURA_HUB_ADDRESS": "",
-        "LOYDURA_REWARDS_ADDRESS": "",
-        "LOYDURA_USDC_ADDRESS": ""
+        "LOYDURA_HUB_ADDRESS": "0x12B48836E495F863F40212f40aEc7372388345a4",
+        "LOYDURA_REWARDS_ADDRESS": "0x3aaE1d1f9E751996aA3CaB9dA9f4D39E737863ea",
+        "LOYDURA_USDC_ADDRESS": "0x1c615884174973eb69c14ebb3c9a91d72f2d035d"
       }
     }
   }

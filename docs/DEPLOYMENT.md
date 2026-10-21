@@ -10,25 +10,20 @@ Apply supabase/migrations/0001_initial.sql to the existing project. The Worker u
 
 ## 2. Worker
 
-From apps/worker:
+From the repository root:
 
     npm run types
-    wrangler secret put SUPABASE_URL
-    wrangler secret put SUPABASE_SECRET_KEY
-    wrangler secret put APP_ORIGIN
-    wrangler secret put ELYSIUM_RPC_URL
-    wrangler secret put LOYDURA_HUB_ADDRESS
-    wrangler secret put LOYDURA_REWARDS_ADDRESS
-    wrangler secret put LOYDURA_USDC_ADDRESS
-    wrangler deploy
+    wrangler secret put SUPABASE_URL --config apps/worker/wrangler.jsonc --env production
+    wrangler secret put SUPABASE_SECRET_KEY --config apps/worker/wrangler.jsonc --env production
+    wrangler deploy --config apps/worker/wrangler.jsonc --env production
 
-The committed wrangler.jsonc declares the Worker entry point, compatibility date, observability, and native LOYDURA_R2 binding to loydura-private. Keep production values in Wrangler configuration/secrets, not .env files. The Worker must answer GET /health with status ok only after config, Supabase, R2, and chain readiness are verified.
+The committed `wrangler.jsonc` declares the Worker entry point, compatibility date, observability, production contract/RPC/origin variables, and native `LOYDURA_R2` binding to `loydura-private`. Keep `SUPABASE_URL` and `SUPABASE_SECRET_KEY` in Wrangler secrets; non-sensitive runtime variables may remain in the environment block. The deployed Worker currently answers [GET /health](https://loydura-api.delealufejoel.workers.dev/health) with status `ok` only after config, Supabase, R2, and chain readiness are verified.
 
 For local development, use ignored .dev.vars and wrangler dev; .dev.vars.example contains placeholders only.
 
 ## 3. Vercel
 
-Deploy apps/web as the Vercel project root with the public values in apps/web/.env.example and CLOUDFLARE_WORKER_ORIGIN set to the deployed Worker origin. Vercel must not receive Supabase secret keys, wallet keys, R2 credentials, or backend-only configuration. The Next config rewrites /api/:path* to the Worker.
+Deploy apps/web as the Vercel project root with the public values in apps/web/.env.example and `CLOUDFLARE_WORKER_ORIGIN` set to the deployed Worker origin. Vercel must not receive Supabase secret keys, wallet keys, R2 credentials, or backend-only configuration. The Next config rewrites `/api/:path*` to the Worker. The current production alias is [loydura.vercel.app](https://loydura.vercel.app).
 
 Validate the browser domain, Worker APP_ORIGIN, forwarded Set-Cookie, HTTPS Secure behavior, and same-origin SIWE before accepting the deployment.
 
