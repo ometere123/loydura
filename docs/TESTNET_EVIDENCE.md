@@ -1,6 +1,6 @@
 # Testnet evidence ledger
 
-This ledger records observed evidence for the source commit `78d5a2267d11f572d2f3dd044b5f1245874c15b7` on 2026-10-21. Testnet assets have no monetary value. Unknown or partially automated gates remain explicitly labeled.
+This ledger records observed evidence for the redesigned code commit `78d5a2267d11f572d2f3dd044b5f1245874c15b7` and final release/evidence commit `0071452397428221d57f06fb14439091758dd4ff` on 2026-10-21. Testnet assets have no monetary value. Unknown or partially automated gates remain explicitly labeled.
 
 | Gate | Status | Evidence |
 |---|---|---|
@@ -19,7 +19,7 @@ This ledger records observed evidence for the source commit `78d5a2267d11f572d2f
 | Production SIWE | VERIFIED THROUGH PRODUCTION API; BROWSER WALLET PROMPT PARTIAL | Existing live evidence verified a real signed EIP-4361 request through the Vercel rewrite, Secure/HttpOnly/SameSite=Lax cookie creation, session validation, logout, replay rejection, and origin rejection. The new client message builder has a six-test Playwright regression guard for real newline characters. An interactive wallet-extension signature prompt was not automated in this run. |
 | Full live membership/campaign ledger | VERIFIED ON TESTNET; NOT RE-RUN AFTER UI REDESIGN | Existing five-wallet ledger remains source-matched because the deployed contracts were not replaced: shop #1 and campaign #1 included four memberships, four locks, two early exits, two completed claims, principal recovery, and creator residual reclaim. The UI redesign does not alter Solidity settlement. |
 | Local Wrangler development | VERIFIED LOCALLY | Wrangler configuration points local frontend rewrites at `127.0.0.1:8787`; missing-secret health returns degraded 503 and hostile origins return 403. |
-| CI | VERIFIED ON FINAL SOURCE COMMIT | [GitHub Actions run 39533830500](https://github.com/ometere123/loydura/actions/runs/39533830500) passed Worker, web, Playwright, and contracts jobs for commit `ec489f2e60437e31be72579af9e458301ffd699a`. |
+| CI | VERIFIED ON FINAL SOURCE COMMIT | [GitHub Actions run 39534283967](https://github.com/ometere123/loydura/actions/runs/39534283967) passed Worker, web, Playwright, and contracts jobs for commit `0071452397428221d57f06fb14439091758dd4ff`. The preceding code/documentation commit was also green in [run 39533830500](https://github.com/ometere123/loydura/actions/runs/39533830500). |
 | Production screenshots | VERIFIED FROM LIVE DEPLOYMENT | Captured with `apps/web/scripts/capture-release-screenshots.mjs` against `https://loydura.vercel.app`, including the previous deployment for the before/after comparison. |
 | Ascend relationship | NOT CLAIMED | Creator-submitted launch URLs remain labeled as provenance claims. No official sponsorship, certification, approval, audit, token launch, traction, or endorsement is inferred. |
 
