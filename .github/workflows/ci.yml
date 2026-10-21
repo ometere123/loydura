@@ -28,7 +28,7 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-      - run: npm ci --legacy-peer-deps --no-audit --no-fund
+      - run: npm ci --legacy-peer-deps --include=optional --fetch-retries=5 --fetch-retry-factor=2 --fetch-retry-mintimeout=1000 --fetch-retry-maxtimeout=60000 --no-audit --no-fund
       - name: Generate Wrangler bindings
         run: npm run types -w @loydura/worker
       - run: npm run typecheck -w @loydura/worker
@@ -41,7 +41,7 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-      - run: npm ci --legacy-peer-deps --no-audit --no-fund
+      - run: npm ci --legacy-peer-deps --include=optional --fetch-retries=5 --fetch-retry-factor=2 --fetch-retry-mintimeout=1000 --fetch-retry-maxtimeout=60000 --no-audit --no-fund
       - run: npm run typecheck -w @loydura/web
       - run: npm run lint -w @loydura/web
       - run: npm run build -w @loydura/web
