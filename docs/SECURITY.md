@@ -24,6 +24,6 @@ OpenZeppelin `SafeERC20` and `ReentrancyGuard` are used. Hostile rebasing, black
 
 ## Residual release limitations
 
-- The final Playwright run does not automate a browser wallet-extension signature prompt; production API signing, cookie behavior, replay rejection, and the SIWE newline regression are verified.
+- The final Playwright run does not automate a browser wallet-extension signature prompt; production API signing, cookie behavior, replay rejection, malformed-message rejection, session expiration, logout, and the SIWE newline regression are verified. The Worker auth suite contains eleven deterministic integration/security tests.
 - A fresh four-member on-chain lifecycle was replayed after the UI-only redesign against the unchanged deployments with `contracts/script/TestnetLifecycle.ps1`; the browser wallet-extension prompt remains a separate manual gate.
 - The dependency graph now reports 24 audit findings (23 moderate, 1 high, 0 critical). Next.js was upgraded to 16.4.2 and its Webpack build/dev paths were regression-tested, removing the PostCSS high finding. The remaining high finding is the transitive WalletConnect/wagmi `ws` path; the available automated fix requires a major wagmi migration that is incompatible with the pinned RainbowKit peer range. No independent audit or mainnet readiness claim is made.

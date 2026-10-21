@@ -19,7 +19,7 @@ npx wrangler secret put SUPABASE_SECRET_KEY --config apps/worker/wrangler.jsonc 
 npx wrangler deploy --config apps/worker/wrangler.jsonc --env production
 ```
 
-The committed `apps/worker/wrangler.jsonc` declares the Hono entry point, compatibility date, observability, production origin/RPC/contract variables, and native `LOYDURA_R2` binding to `loydura-private`. Production currently runs at [loydura-api.delealufejoel.workers.dev](https://loydura-api.delealufejoel.workers.dev), version `3d9c7667-62e1-4b32-a767-f4db3194c13f`. Verify [GET /health](https://loydura-api.delealufejoel.workers.dev/health) returns 200 with all five checks true.
+The committed `apps/worker/wrangler.jsonc` declares the Hono entry point, compatibility date, observability, production origin/RPC/contract variables, and native `LOYDURA_R2` binding to `loydura-private`. Production currently runs at [loydura-api.delealufejoel.workers.dev](https://loydura-api.delealufejoel.workers.dev), version `22bbccbf-8adc-406d-b89e-552e3b5fda00`, from Worker source commit `fbfb74d7d005d52db9dcc94fbe3d830822c81b57`. Verify [GET /health](https://loydura-api.delealufejoel.workers.dev/health) returns 200 with all five checks true.
 
 For local development, copy `apps/worker/.dev.vars.example` to ignored `apps/worker/.dev.vars`, run `npm run dev:worker`, and keep `CLOUDFLARE_WORKER_ORIGIN=http://127.0.0.1:8787` in the ignored frontend `.env.local`. Never commit secrets or R2 credentials.
 
