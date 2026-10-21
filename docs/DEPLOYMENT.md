@@ -33,7 +33,7 @@ Deploy with the authenticated team scope when the local project link is unavaila
 vercel deploy --prod --yes --scope delealufejoel-4184s-projects
 ```
 
-The current production deployment is [dpl_ATpuD1L77i8CPb8EckwkZ6EapezT](https://vercel.com/delealufejoel-4184s-projects/loydura/ATpuD1L77i8CPb8EckwkZ6EapezT), aliased to [loydura.vercel.app](https://loydura.vercel.app). Vercel's `/api/:path*` rewrite is a transport proxy; it does not run API business logic.
+The current production deployment is [dpl_4CD1mP2FCNaAvZm1NtnySJtq4HRt](https://vercel.com/delealufejoel-4184s-projects/loydura/4CD1mP2FCNaAvZm1NtnySJtq4HRt), built from `b2e63bf3304b3f4511875ecb42cab5d9ff48aba8` and aliased to [loydura.vercel.app](https://loydura.vercel.app). Vercel's `/api/:path*` rewrite is a transport proxy; it does not run API business logic.
 
 ## Release verification
 

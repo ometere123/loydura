@@ -10,11 +10,11 @@ Launching a token does not automatically create customer activity. Loydura gives
 
 ## Execution evidence
 
-- Source commit: `78d5a2267d11f572d2f3dd044b5f1245874c15b7`.
+- Source commit: `b2e63bf3304b3f4511875ecb42cab5d9ff48aba8`.
 - Frontend: [loydura.vercel.app](https://loydura.vercel.app).
 - Worker: [loydura-api.delealufejoel.workers.dev](https://loydura-api.delealufejoel.workers.dev).
 - Contracts: Hub `0x12B48836E495F863F40212f40aEc7372388345a4`; Rewards `0x3aaE1d1f9E751996aA3CaB9dA9f4D39E737863ea`.
-- CI: [run 39532602749](https://github.com/ometere123/loydura/actions/runs/39532602749).
+- CI: [run 39536996835](https://github.com/ometere123/loydura/actions/runs/39536996835).
 - Full source, lifecycle, storage, and test evidence: [TESTNET_EVIDENCE.md](TESTNET_EVIDENCE.md).
 
 ## Competition copy
