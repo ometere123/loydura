@@ -25,5 +25,5 @@ OpenZeppelin `SafeERC20` and `ReentrancyGuard` are used. Hostile rebasing, black
 ## Residual release limitations
 
 - The final Playwright run does not automate a browser wallet-extension signature prompt; production API signing, cookie behavior, replay rejection, and the SIWE newline regression are verified.
-- The real five-wallet testnet lifecycle ledger is retained from the unchanged deployed contracts and was not replayed after the UI-only redesign.
+- A fresh four-member on-chain lifecycle was replayed after the UI-only redesign against the unchanged deployments with `contracts/script/TestnetLifecycle.ps1`; the browser wallet-extension prompt remains a separate manual gate.
 - The dependency graph now reports 26 audit findings (24 moderate, 2 high, 0 critical) after removing the unused `eslint-config-next` package. The remaining high findings are transitive PostCSS and WalletConnect/wagmi paths; available automated fixes require major Next or wagmi migrations and were not applied without full compatibility validation. No independent audit or mainnet readiness claim is made.
