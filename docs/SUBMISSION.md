@@ -14,7 +14,7 @@ Launching a token does not automatically create customer activity. Loydura gives
 - Frontend: [loydura.vercel.app](https://loydura.vercel.app).
 - Worker: [loydura-api.delealufejoel.workers.dev](https://loydura-api.delealufejoel.workers.dev).
 - Contracts: Hub `0x12B48836E495F863F40212f40aEc7372388345a4`; Rewards `0x3aaE1d1f9E751996aA3CaB9dA9f4D39E737863ea`.
-- CI: [run 39559051919](https://github.com/ometere123/loydura/actions/runs/39559051919).
+- CI: [run 39560410840](https://github.com/ometere123/loydura/actions/runs/39560410840).
 - Post-redesign testnet lifecycle: campaign #2 completed with four memberships, four locks, two early exits, two claims, principal recovery, and creator reclaim; transaction evidence is in [TESTNET_EVIDENCE.md](TESTNET_EVIDENCE.md).
 - Full source, lifecycle, storage, and test evidence: [TESTNET_EVIDENCE.md](TESTNET_EVIDENCE.md).
 
