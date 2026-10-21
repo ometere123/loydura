@@ -10,7 +10,7 @@ This file records observed evidence only. Unknown values remain blockers.
 | Worker security/integration tests | PARTIAL | Worker runtime tests pass (6 tests), including filename/magic-byte validation, origin/CSRF rejection, and degraded health behavior. Supabase/R2 integration needs configured test services. |
 | Frontend typecheck/lint/build | VERIFIED LOCALLY | Frontend typecheck, source-scoped lint, and Next production build passed. Build emitted only optional wallet-library and CSS warnings. |
 | Supabase migration/RLS | NOT VERIFIED | Requires access to the existing Supabase project. |
-| Private R2 upload/download | NOT VERIFIED | Requires Cloudflare credentials and the private loydura-private bucket. |
+| Private R2 upload/download | PARTIAL | The private `loydura-private` bucket was provisioned in the authenticated Cloudflare account on 2026-10-21; Worker-bound upload/download authorization still requires a deployed Worker and runtime test. |
 | Elysium Hub deployment | NOT DEPLOYED / UNKNOWN | Address and transaction must be recorded from an authorized deployment. |
 | Elysium Rewards deployment | NOT DEPLOYED / UNKNOWN | Address and transaction must be recorded from an authorized deployment. |
 | Vercel frontend deployment | NOT DEPLOYED / UNKNOWN | URL and rewrite/cookie evidence required. |
@@ -18,7 +18,7 @@ This file records observed evidence only. Unknown values remain blockers.
 | Browser SIWE and production cookies | NOT VERIFIED | Requires deployed frontend and Worker. |
 | Full membership/campaign lifecycle | NOT VERIFIED | Requires funded testnet wallets and receipt evidence. |
 | Local Wrangler development | VERIFIED LOCALLY | Wrangler served `/health` with an expected 503 degraded response when secrets/contracts were absent and rejected a hostile origin with 403. |
-| CI | VERIFIED REMOTELY | GitHub Actions run [39519716788](https://github.com/ometere123/loydura/actions/runs/39519716788) passed contracts, Worker, and web jobs, including the frontend Playwright suite. |
+| CI | VERIFIED REMOTELY | GitHub Actions run [39520059448](https://github.com/ometere123/loydura/actions/runs/39520059448) passed contracts, Worker, and web jobs, including the frontend Playwright suite. |
 | Ascend submission | NOT CLAIMED | No partnership, token launch, audit, or competition acceptance is inferred. |
 
 ## Blockers
