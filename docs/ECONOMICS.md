@@ -12,6 +12,8 @@ There is no interest-bearing investment and **no yield guarantee**. Net pool emi
 
 The creator cannot reclaim unpaid survivor rewards. Before completion, creator refunds consist only of idle emission and stranded forfeitures; after all eligible participants have claimed, unspent rounding dust becomes refundable.
 
+The repository includes an independent reference settlement model in `contracts/test/LoyduraReferenceModel.t.sol`. It fuzzes two-member early-exit sequences and checks that claims plus creator refunds never exceed the funded pool while locked principal remains recoverable. This is a model-based test, not an external audit or a guarantee against every hostile ERC-20 behavior.
+
 Proof of lock completion is **not** user engagement, repeat purchase, next-day retention or token price support. The UI shows the honest on-chain lock and early-exit statistics, not imaginary human-user analytics.
 
 ## Candidate platform token

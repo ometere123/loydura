@@ -1,33 +1,40 @@
 # Deployment procedure
 
-Deployment is evidence-driven. Never put private keys, SUPABASE_SECRET_KEY, R2 credentials, or deployment-only values in source control.
+Loydura deploys one product with a strict runtime boundary: Next.js on Vercel, all backend computation on Cloudflare Workers, Supabase PostgreSQL for server-side persistence, private Cloudflare R2 for protected bytes, and Solidity settlement on Elysium Testnet 99801.
 
-## 1. Contracts and Supabase
+## Contracts and Supabase
 
-Use Elysium Testnet chain 99801 and the configured public RPC. Run forge build and forge test -vvv, deploy with the existing Foundry script only when authorized, verify source on the official explorer, and record addresses plus transaction hashes in docs/TESTNET_EVIDENCE.md.
+Use Elysium Testnet chain 99801 and `https://testnet-rpc.elysium.kinetiq.xyz`. Run `forge build` and `forge test -vvv`. Deploy the existing Foundry script only when separately authorized; do not replace immutable contracts for frontend changes. The current Hub and Rewards deployments are source-verified on the explorer and recorded in [TESTNET_EVIDENCE.md](TESTNET_EVIDENCE.md).
 
-Apply supabase/migrations/0001_initial.sql to the existing project. The Worker uses the modern SUPABASE_SECRET_KEY (sb_secret_...) server-side. Confirm the nonce and rate-limit RPCs are atomic and that RLS remains closed to anonymous/authenticated browser clients.
+Apply `supabase/migrations/0001_initial.sql` to the existing project. The Worker uses `SUPABASE_URL` and the modern `SUPABASE_SECRET_KEY` (`sb_secret_...`) only as Wrangler secrets. Confirm that nonce consumption and rate limiting remain atomic and that RLS stays closed to browser clients.
 
-## 2. Worker
+## Cloudflare Worker
 
 From the repository root:
 
-    npm run types
-    wrangler secret put SUPABASE_URL --config apps/worker/wrangler.jsonc --env production
-    wrangler secret put SUPABASE_SECRET_KEY --config apps/worker/wrangler.jsonc --env production
-    wrangler deploy --config apps/worker/wrangler.jsonc --env production
+```text
+npm ci
+npx wrangler secret put SUPABASE_URL --config apps/worker/wrangler.jsonc --env production
+npx wrangler secret put SUPABASE_SECRET_KEY --config apps/worker/wrangler.jsonc --env production
+npx wrangler deploy --config apps/worker/wrangler.jsonc --env production
+```
 
-The committed `wrangler.jsonc` declares the Worker entry point, compatibility date, observability, production contract/RPC/origin variables, and native `LOYDURA_R2` binding to `loydura-private`. Keep `SUPABASE_URL` and `SUPABASE_SECRET_KEY` in Wrangler secrets; non-sensitive runtime variables may remain in the environment block. The deployed Worker currently answers [GET /health](https://loydura-api.delealufejoel.workers.dev/health) with status `ok` only after config, Supabase, R2, and chain readiness are verified.
+The committed `apps/worker/wrangler.jsonc` declares the Hono entry point, compatibility date, observability, production origin/RPC/contract variables, and native `LOYDURA_R2` binding to `loydura-private`. Production currently runs at [loydura-api.delealufejoel.workers.dev](https://loydura-api.delealufejoel.workers.dev), version `3d9c7667-62e1-4b32-a767-f4db3194c13f`. Verify [GET /health](https://loydura-api.delealufejoel.workers.dev/health) returns 200 with all five checks true.
 
-For local development, use ignored .dev.vars and wrangler dev; .dev.vars.example contains placeholders only.
+For local development, copy `apps/worker/.dev.vars.example` to ignored `apps/worker/.dev.vars`, run `npm run dev:worker`, and keep `CLOUDFLARE_WORKER_ORIGIN=http://127.0.0.1:8787` in the ignored frontend `.env.local`. Never commit secrets or R2 credentials.
 
-## 3. Vercel
+## Vercel
 
-Deploy apps/web as the Vercel project root with the public values in apps/web/.env.example and `CLOUDFLARE_WORKER_ORIGIN` set to the deployed Worker origin. Vercel must not receive Supabase secret keys, wallet keys, R2 credentials, or backend-only configuration. The Next config rewrites `/api/:path*` to the Worker. The current production alias is [loydura.vercel.app](https://loydura.vercel.app).
+The linked project root is `apps/web`; its install command is `cd ../.. && npm ci` and its build command is `cd ../.. && npm run build`. Production receives only public contract/RPC/WalletConnect values plus `CLOUDFLARE_WORKER_ORIGIN=https://loydura-api.delealufejoel.workers.dev`.
 
-Validate the browser domain, Worker APP_ORIGIN, forwarded Set-Cookie, HTTPS Secure behavior, and same-origin SIWE before accepting the deployment.
+Deploy with the authenticated team scope when the local project link is unavailable:
 
-## 4. Release proof
+```text
+vercel deploy --prod --yes --scope delealufejoel-4184s-projects
+```
 
-Run contract, Worker, Supabase, frontend, and Playwright suites. Then test real browser login, logout, creator authorization, 12 MiB upload limits, private download streaming, expired-member denial, cross-shop isolation, and the complete membership/campaign lifecycle on testnet. Record URLs, hashes, receipts, health output, and CI runs. A green frontend build alone is not release evidence.
+The current production deployment is [dpl_ATpuD1L77i8CPb8EckwkZ6EapezT](https://vercel.com/delealufejoel-4184s-projects/loydura/ATpuD1L77i8CPb8EckwkZ6EapezT), aliased to [loydura.vercel.app](https://loydura.vercel.app). Vercel's `/api/:path*` rewrite is a transport proxy; it does not run API business logic.
 
+## Release verification
+
+Run contract, Worker, frontend, and Playwright suites. Check the production Worker health endpoint, Vercel rewrite responses, anonymous browser access, public contract reads, SIWE cookie attributes, origin rejection, private R2 authorization, and the source-verification links. A green frontend build alone is not release evidence. The current observed results and limitations are in [TESTNET_EVIDENCE.md](TESTNET_EVIDENCE.md).
