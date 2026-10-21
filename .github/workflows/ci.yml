@@ -44,7 +44,10 @@ jobs:
       - run: npm ci --legacy-peer-deps --include=optional --fetch-retries=5 --fetch-retry-factor=2 --fetch-retry-mintimeout=1000 --fetch-retry-maxtimeout=60000 --no-audit --no-fund
       - run: npm run typecheck -w @loydura/web
       - run: npm run lint -w @loydura/web
-      - run: npm run build -w @loydura/web
+      - name: Build frontend
+        env:
+          NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ci-build-only-placeholder
+        run: npm run build -w @loydura/web
       - name: Install Playwright
         run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

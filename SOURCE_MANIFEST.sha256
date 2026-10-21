@@ -1,4 +1,4 @@
-9b6a26f7357f7a61661528be70a7907ce112d90482723159759bfe5b51d34a60  .github/workflows/ci.yml
+61b552e04fc8161520766598b735da003b9cb31c3e17af8dd8e88cdd8d871d29  .github/workflows/ci.yml
 afe0de99c8ec54dc582cf37a57c75750f55108d985b1defa5ad666d9c45241cc  .gitignore
 959756f0e46e4b090507cff930d8b6d2451f6a6b256cfc7a9bc8c4e62603c1c4  apps/web/.env.example
 fab6b8f252e6ab35f7e6ff393f0c46f5dbf22a842b801109cc39e388dbc186d0  apps/web/app/campaign/[id]/page.tsx
