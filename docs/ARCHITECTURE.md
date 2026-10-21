@@ -4,7 +4,7 @@
 
 | Boundary | Responsibility |
 |---|---|
-| Vercel / `apps/web` | Next.js pages, premium design system, wallet connection, wallet-signed contract transactions, and same-origin browser calls to `/api/*` |
+| Vercel / `apps/web` | Next.js 16.4.2 pages (explicit Webpack build/dev mode), premium design system, wallet connection, wallet-signed contract transactions, and same-origin browser calls to `/api/*` |
 | Cloudflare Worker / `apps/worker` | Hono API, EIP-4361 verification, Web Crypto sessions, origin/CSRF checks, rate limits, Supabase operations, R2 operations, and live Elysium reads |
 | Supabase PostgreSQL | Nonces, hashed sessions, shop profiles, content metadata, and atomic rate-limit buckets through security-definer RPCs |
 | Cloudflare R2 | Private file bytes through the native `LOYDURA_R2` binding; no public objects or browser credentials |
