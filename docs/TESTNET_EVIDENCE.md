@@ -19,7 +19,8 @@ This ledger records observed evidence for the source commit `78d5a2267d11f572d2f
 | Production SIWE | VERIFIED THROUGH PRODUCTION API; BROWSER WALLET PROMPT PARTIAL | Existing live evidence verified a real signed EIP-4361 request through the Vercel rewrite, Secure/HttpOnly/SameSite=Lax cookie creation, session validation, logout, replay rejection, and origin rejection. The new client message builder has a six-test Playwright regression guard for real newline characters. An interactive wallet-extension signature prompt was not automated in this run. |
 | Full live membership/campaign ledger | VERIFIED ON TESTNET; NOT RE-RUN AFTER UI REDESIGN | Existing five-wallet ledger remains source-matched because the deployed contracts were not replaced: shop #1 and campaign #1 included four memberships, four locks, two early exits, two completed claims, principal recovery, and creator residual reclaim. The UI redesign does not alter Solidity settlement. |
 | Local Wrangler development | VERIFIED LOCALLY | Wrangler configuration points local frontend rewrites at `127.0.0.1:8787`; missing-secret health returns degraded 503 and hostile origins return 403. |
-| CI | VERIFIED ON FINAL SOURCE COMMIT | [GitHub Actions run 39532602749](https://github.com/ometere123/loydura/actions/runs/39532602749) passed Worker, web, Playwright, and contracts jobs for commit `78d5a2267d11f572d2f3dd044b5f1245874c15b7`. |
+| CI | VERIFIED ON FINAL SOURCE COMMIT | [GitHub Actions run 39533830500](https://github.com/ometere123/loydura/actions/runs/39533830500) passed Worker, web, Playwright, and contracts jobs for commit `ec489f2e60437e31be72579af9e458301ffd699a`. |
+| Production screenshots | VERIFIED FROM LIVE DEPLOYMENT | Captured with `apps/web/scripts/capture-release-screenshots.mjs` against `https://loydura.vercel.app`, including the previous deployment for the before/after comparison. |
 | Ascend relationship | NOT CLAIMED | Creator-submitted launch URLs remain labeled as provenance claims. No official sponsorship, certification, approval, audit, token launch, traction, or endorsement is inferred. |
 
 ## Contracts and lifecycle references
@@ -33,6 +34,17 @@ This ledger records observed evidence for the source commit `78d5a2267d11f572d2f
 - Principal withdrawals: [0xee9cb9…](https://elysium.kinetiq.xyz/testnet-explorer/transaction/0xee9cb92d4f5d3a427ad787d5eb553200006b86f66a3ccea6cef41733d85356db) and [0x6bfb65…](https://elysium.kinetiq.xyz/testnet-explorer/transaction/0x6bfb6523d635a4671ceb92492e8707e0879d956ff17c77ac6f059a9a45cc09d7).
 - Creator residual reclaim: [0x00d6ab…](https://elysium.kinetiq.xyz/testnet-explorer/transaction/0x00d6ab7af8b3b395df632b796f429663c6af58a43e27cc49b8f8aeee2acdb2b2).
 - Final recorded campaign state: budget `120007`, claimed `119998`, refunded `9` micro-USDC; `2` early exits, `2` completed positions, `0` pending claims, and `0` active lockers.
+
+## Browser screenshot evidence
+
+The release screenshot set is stored under `docs/evidence/screenshots/`:
+
+- `before-home-1440.png` — previous deployed homepage.
+- `after-home-1440.png` and `after-home-375.png` — redesigned desktop and mobile homepage.
+- `after-discover-1440.png`, `after-studio-1440.png`, `after-dashboard-1440.png` — principal workspace routes.
+- `after-shop-1-1440.png` and `after-campaign-1-1440.png` — live storefront and campaign routes.
+
+These are captures of the real production deployment, not static mockups.
 
 ## Remaining release limitations
 
